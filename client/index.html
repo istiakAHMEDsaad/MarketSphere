@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="caramellatte">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -7,6 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Market Sphere</title>
 </head>
+
+<script>
+  const theme = localStorage.getItem( 'theme' ) || 'caramellatte';
+  document.documentElement.setAttribute( 'data-theme', theme );
+</script>
 
 <body>
   <div id="root"></div>

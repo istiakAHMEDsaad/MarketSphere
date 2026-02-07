@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router';
+import DarkModeToggle from '../DarkToggle/DarkModeToggle';
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const Navbar = () => {
       </div>
 
       {/* medium devices */}
-      <div className='flex-none'>
+      <div className='flex flex-row items-center pr-2'>
         <div className='hidden md:flex'>
           <ul className='menu menu-horizontal px-1'>
             {navText.map((item) => (
@@ -33,6 +34,8 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
+
+        <DarkModeToggle />
       </div>
 
       {/* small devices */}

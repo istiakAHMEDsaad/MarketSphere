@@ -2,8 +2,9 @@
 
 @import "tailwindcss";
 
+/* dim, sunset */
 @plugin "daisyui" {
-  themes: caramellatte --default, sunset --prefersdark;
+  themes: caramellatte --default, dim --prefersdark;
 }
 
 @theme {
