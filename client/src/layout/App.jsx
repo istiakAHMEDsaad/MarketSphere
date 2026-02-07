@@ -1,7 +1,11 @@
+import Navbar from '../components/Common/Navbar';
+
 const App = () => {
   return (
-    <div>App</div>
-  )
-}
+    <div className='font-poppins'>
+      <Navbar />
+    </div>
+  );
+};
 
-export default App
+export default App;
