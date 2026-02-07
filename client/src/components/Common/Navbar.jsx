@@ -12,7 +12,7 @@ const Navbar = () => {
   return (
     <div className='navbar bg-base-100'>
       <div className='flex-1'>
-        <Link to={'/'} className='btn btn-ghost md:text-xl'>
+        <Link to={'/'} className='btn btn-ghost text-xl'>
           Market Sphere
         </Link>
       </div>
