@@ -6,7 +6,7 @@ const Navbar = () => {
 
   const navText = [
     { title: 'Home', link: '/' },
-    { title: 'All Jobs', link: '/all-jobs' },
+    { title: 'All Jobs', link: '/jobs' },
     { title: 'Login', link: '/login' },
   ];
 

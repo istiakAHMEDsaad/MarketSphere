@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import errorPage from '../assets/illustration.svg';
-import { ArrowLeft, Home, HomeIcon } from 'lucide-react';
+import { ArrowLeft, HomeIcon } from 'lucide-react';
 
 const ErrorPage = () => {
   return (
