@@ -1,13 +1,15 @@
 import { Link, useLocation } from 'react-router';
 import DarkModeToggle from '../DarkToggle/DarkModeToggle';
+import { useContext } from 'react';
+import { AppContext } from '../../../context/AppContext';
 
 const Navbar = () => {
   const location = useLocation();
+  const { user, loading } = useContext(AppContext);
 
   const navText = [
     { title: 'Home', link: '/' },
     { title: 'All Jobs', link: '/jobs' },
-    { title: 'Login', link: '/login' },
   ];
 
   return (
@@ -26,12 +28,15 @@ const Navbar = () => {
               <li key={item.link}>
                 <Link
                   to={item.link}
-                  className={`btn ${location.pathname === item.link ? 'btn-neutral' : 'btn-ghost'}`}
+                  className={`btn ${location.pathname === item.link ? 'btn-neutral dark:btn-info' : 'btn-ghost'}`}
                 >
                   {item.title}
                 </Link>
               </li>
             ))}
+
+            {/* Signed In Users */}
+            <li>{!user && <Link to='/login' className='btn btn-ghost'>Login</Link>}</li>
           </ul>
         </div>
 
