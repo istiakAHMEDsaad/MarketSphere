@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 const CarouselSlide = ({ image, text }) => {
   return (
     <div
-      className='w-full bg-center bg-cover h-152 rounded-2xl'
+      className='w-full bg-center bg-cover h-152 rounded-2xl -z-10'
       style={{ backgroundImage: `url(${image})` }}
     >
       <div className='flex items-center justify-center w-full h-full bg-neutral-900/70 rounded-2xl'>
