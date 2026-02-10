@@ -38,6 +38,12 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
+            {user && (
+              <li className='flex items-center justify-center'>
+                Hi | {user?.displayName.slice(0, 7)}
+                {user?.displayName.length > 7 ? '...' : ''}
+              </li>
+            )}
           </ul>
 
           {/* User Profile / Login (Desktop) */}
@@ -95,21 +101,31 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className='menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-40'
+            className='menu menu-sm dropdown-content mt-3 z-10 p-2 shadow bg-base-100 rounded-box w-40'
           >
+            <p className='flex items-center justify-center text-xl'>
+              Hi | {user?.displayName.slice(0, 7)}
+              {user?.displayName.length > 7 ? '...' : ''}
+            </p>
+
             {navText.map((item) => (
-              <li key={item.link}>
-                <Link to={item.link}>{item.title}</Link>
+              <li key={item.link} className='my-1'>
+                <Link className='btn btn-soft' to={item.link}>
+                  {item.title}
+                </Link>
               </li>
             ))}
             <div className='divider my-0'></div>
+
             {!user ? (
               <li>
                 <Link to='/login'>Login</Link>
               </li>
             ) : (
               <li>
-                <button onClick={logout}>Logout</button>
+                <button className='btn btn-soft btn-error' onClick={logout}>
+                  Logout
+                </button>
               </li>
             )}
           </ul>
