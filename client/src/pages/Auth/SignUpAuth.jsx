@@ -23,6 +23,15 @@ const SignUpAuth = () => {
     }
   };
 
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   // register
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -59,8 +68,7 @@ const SignUpAuth = () => {
       return toast.error('Passwords do not match');
     }
 
-    const imageRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
-    if (!imageRegex.test(photo)) {
+    if (!isValidUrl(photo)) {
       return toast.error('Invalid image URL');
     }
 

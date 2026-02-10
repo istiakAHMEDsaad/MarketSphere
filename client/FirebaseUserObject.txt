@@ -1,0 +1,27 @@
+{
+    "uid": "1ptPaTILK5QPC6d5rsrG9bAdluo2",
+    "email": "kfkrihc7rg@lnovic.com",
+    "emailVerified": false,
+    "displayName": "Tamim",
+    "isAnonymous": false,
+    "photoURL": "https://images.unsplash.com/vector-1738866252023-eee24be8748c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "providerData": [
+        {
+            "providerId": "password",
+            "uid": "kfkrihc7rg@lnovic.com",
+            "displayName": "Tamim",
+            "email": "kfkrihc7rg@lnovic.com",
+            "phoneNumber": null,
+            "photoURL": "https://images.unsplash.com/vector-1738866252023-eee24be8748c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        }
+    ],
+    "stsTokenManager": {
+        "refreshToken": "AMf-vBxPJ2oMHkTC16syl4w7vrwAJpF7izAVNv8FcppPu5cdZdndbMO3dWwBqaYLIOqlcsx6Kfz9mmP9HZSVIAOwtY-QWvXTTmEzeeH5ozzuWDXGeQqbFGL_2Bfeo_MuWNBxzaS85-okaj-p1kxgP0bn6AZ9UMPOHzh02TeGnyAMLBxpx72yUdXHxwXjSGayeyN3UH5M6B9QaugPHg0qDYAURvji59VnRw",
+        "accessToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjRiMTFjYjdhYjVmY2JlNDFlOTQ4MDk0ZTlkZjRjNWI1ZWNhMDAwOWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbWFya2V0c3BoZXJlLWI5OWU4IiwiYXVkIjoibWFya2V0c3BoZXJlLWI5OWU4IiwiYXV0aF90aW1lIjoxNzcwNzIzNjQzLCJ1c2VyX2lkIjoiMXB0UGFUSUxLNVFQQzZkNXJzckc5YkFkbHVvMiIsInN1YiI6IjFwdFBhVElMSzVRUEM2ZDVyc3JHOWJBZGx1bzIiLCJpYXQiOjE3NzA3MjM2NDMsImV4cCI6MTc3MDcyNzI0MywiZW1haWwiOiJrZmtyaWhjN3JnQGxub3ZpYy5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsia2ZrcmloYzdyZ0Bsbm92aWMuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.WzJfEPZoTmeYMlA1xNm3runYMjdSa13C1-2JcMnPBglwoQmxwKEdT64Px-yfxNF33xTcsno-fmtcxjeTvrX-3f5vZoofd4outJAv1sJ2Woi9FC45P9RdSLBVIt355hHCszFLAyKXTDFcFw2VoVOqX3p5pCi-UbeKFt1ST9Z9So7zAo3FKkwsLkWeRZNwUCrgZuCfvjuyDLv97kNRJnCY2FN2Pg5thyESs7tdw-ALZRW8xwPDLipvIfCrzyW1a_-O29_Wu6lFI7m-VoGSHGhmnuEtSFIOPIfbNEb_rJoNWJVPHgAxLE-gn9sezyvZUbur-MPWFQG5Y79i-wCiHyr3AQ",
+        "expirationTime": 1770727241678
+    },
+    "createdAt": "1770723643014",
+    "lastLoginAt": "1770723643014",
+    "apiKey": "AIzaSyB5LP5BfJTqaDF7DmxzNixIFfEyKgAGmJ8",
+    "appName": "[DEFAULT]"
+}
