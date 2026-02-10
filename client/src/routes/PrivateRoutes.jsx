@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import LoadingSpinner from '../components/LoadingSpinner';
 import PropTypes from 'prop-types';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../context/AppContext';
 import { useLocation, Navigate } from 'react-router';
 
 const PrivateRoutes = ({ children }) => {

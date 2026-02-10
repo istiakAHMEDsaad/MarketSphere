@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useContext, useState } from 'react';
-import { AppContext } from '../../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 import { useNavigate, Link } from 'react-router';
 
 const SignUpAuth = () => {

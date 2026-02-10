@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { AppContext } from '../../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -185,7 +185,8 @@ const SignInAuth = () => {
           {/* Signup */}
           <p className='text-gray-500/90 text-sm mt-4'>
             Don&apos;t have an account?{' '}
-            <Link to='/register'
+            <Link
+              to='/register'
               type='button'
               className='text-indigo-400 hover:underline'
             >

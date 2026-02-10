@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import DarkModeToggle from '../DarkToggle/DarkModeToggle';
 import { useContext } from 'react';
-import { AppContext } from '../../../context/AppContext';
+import { AppContext } from '../../context/AppContext';
 
 const Navbar = () => {
   const location = useLocation();
