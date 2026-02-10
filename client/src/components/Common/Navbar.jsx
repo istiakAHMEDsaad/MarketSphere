@@ -13,7 +13,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className='navbar bg-base-100 shadow-sm px-4 md:px-8 sticky top-0 z-[100]'>
+    <div className='navbar bg-base-100 shadow-sm px-4 md:px-8 sticky top-0 z-10'>
       <div className='flex-1'>
         <Link to={'/'} className='btn btn-ghost text-xl font-bold'>
           Market Sphere
@@ -66,7 +66,11 @@ const Navbar = () => {
                 tabIndex={0}
                 className='menu menu-sm dropdown-content mt-3 z-10 p-2 shadow bg-base-100 rounded-box w-52'
               >
-                <li>
+                <li className=''>
+                  <button>Add Job</button>
+                  <button>My Posted Job</button>
+                  <button>My Bids</button>
+                  <button>Bid Request</button>
                   <button
                     onClick={logout}
                     className='btn btn-ghost text-red-500'
@@ -110,19 +114,22 @@ const Navbar = () => {
 
             {navText.map((item) => (
               <li key={item.link} className='my-1'>
-                <Link className='btn btn-soft' to={item.link}>
+                <Link className='' to={item.link}>
                   {item.title}
                 </Link>
               </li>
             ))}
-            <div className='divider my-0'></div>
-
             {!user ? (
               <li>
                 <Link to='/login'>Login</Link>
               </li>
             ) : (
               <li>
+                <button>Add Job</button>
+                <button>My Posted Job</button>
+                <button>My Bids</button>
+                <button>Bid Request</button>
+                <div className='divider my-0'></div>
                 <button className='btn btn-soft btn-error' onClick={logout}>
                   Logout
                 </button>
