@@ -36,7 +36,14 @@ const Navbar = () => {
             ))}
 
             {/* Signed In Users */}
-            <li>{!user && <Link to='/login' className='btn btn-ghost'>Login</Link>}</li>
+            <li>
+              {!user && (
+                <Link to='/login' className='btn btn-ghost'>
+                  Login
+                </Link>
+              )}
+              {user && <p>logout</p>}
+            </li>
           </ul>
         </div>
 
