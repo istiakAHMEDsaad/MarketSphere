@@ -5,11 +5,11 @@ const TabCategories = () => {
   return (
     <div className='container px-6 py-10 mx-auto'>
       <div className='text-center mb-10'>
-        <h1 className='text-3xl font-bold text-info capitalize lg:text-4xl'>
+        <h1 className='text-3xl font-bold text-accent capitalize lg:text-4xl'>
           Browse Jobs By Category
         </h1>
-        <div className='w-20 h-1 bg-info mx-auto mt-4 rounded-full'></div>
-        <p className='max-w-2xl mx-auto mt-6 text-base-content/70'>
+        <div className='w-20 h-1 bg-accent mx-auto mt-4 rounded-full'></div>
+        <p className='max-w-2xl mx-auto mt-6 text-base-accent/70'>
           Discover your next career move across our top sectors. Select a
           category to filter the current openings.
         </p>
@@ -20,19 +20,19 @@ const TabCategories = () => {
           <TabList className='tabs tabs-boxed bg-base-200 p-2 rounded-xl'>
             <Tab
               className='tab text-lg transition-all duration-300 rounded-md'
-              selectedClassName='tab-active !bg-info !text-info-content'
+              selectedClassName='tab-active !bg-accent !text-accent-content'
             >
               Web Development
             </Tab>
             <Tab
               className='tab text-lg transition-all duration-300'
-              selectedClassName='tab-active !bg-info !text-info-content rounded-md'
+              selectedClassName='tab-active !bg-accent !text-accent-content rounded-md'
             >
               Graphics Design
             </Tab>
             <Tab
               className='tab text-lg transition-all duration-300'
-              selectedClassName='tab-active !bg-info !text-info-content rounded-md'
+              selectedClassName='tab-active !bg-accent !text-accent-content rounded-md'
             >
               Digital Marketing
             </Tab>

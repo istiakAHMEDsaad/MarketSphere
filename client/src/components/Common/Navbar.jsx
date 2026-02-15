@@ -30,7 +30,7 @@ const Navbar = () => {
                   to={item.link}
                   className={`btn btn-sm ${
                     location.pathname === item.link
-                      ? 'btn-neutral dark:btn-info'
+                      ? 'btn-neutral'
                       : 'btn-ghost'
                   }`}
                 >
@@ -67,10 +67,10 @@ const Navbar = () => {
                 className='menu menu-sm dropdown-content mt-3 z-10 p-2 shadow bg-base-100 rounded-box w-52'
               >
                 <li className=''>
-                  <button>Add Job</button>
-                  <button>My Posted Job</button>
-                  <button>My Bids</button>
-                  <button>Bid Request</button>
+                  <Link to='/add-job'>Add Job</Link>
+                  <Link to='/my-posted-jobs'>My Posted Job</Link>
+                  <Link to='/my-bids'>My Bids</Link>
+                  <Link to='/bid-requests'>Bid Request</Link>
                   <button
                     onClick={logout}
                     className='btn btn-ghost text-red-500'
@@ -125,10 +125,10 @@ const Navbar = () => {
               </li>
             ) : (
               <li>
-                <button>Add Job</button>
-                <button>My Posted Job</button>
-                <button>My Bids</button>
-                <button>Bid Request</button>
+                <Link to='/add-job'>Add Job</Link>
+                <Link to='/my-posted-jobs'>My Posted Job</Link>
+                <Link to='/my-bids'>My Bids</Link>
+                <Link to='/bid-requests'>Bid Request</Link>
                 <div className='divider my-0'></div>
                 <button className='btn btn-soft btn-error' onClick={logout}>
                   Logout

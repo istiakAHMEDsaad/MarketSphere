@@ -8,7 +8,7 @@ const JobCardDetails = () => {
   return (
     <div className='flex flex-col lg:flex-row justify-center gap-8 items-start min-h-[calc(100vh-306px)] max-w-7xl mx-auto py-12 px-4'>
       {/* Left Side: Job Details */}
-      <div className='flex-1 w-full p-8 bg-white rounded-2xl border border-gray-100 shadow-sm'>
+      <div className='flex-1 w-full p-8 bg-neutral-content rounded-2xl border border-gray-100 shadow-sm'>
         <div className='flex items-center justify-between'>
           <span className='text-xs font-semibold tracking-widest text-gray-400 uppercase'>
             Deadline: 28/05/2024
@@ -29,7 +29,7 @@ const JobCardDetails = () => {
             through out-of-the-box architectures.
           </p>
 
-          <div className='mt-8 p-6 bg-gray-50 rounded-xl border border-gray-100'>
+          <div className='mt-8 p-6 bg-neutral-100 rounded-xl'>
             <h3 className='text-sm font-bold text-gray-400 uppercase tracking-wider mb-4'>
               Buyer Details
             </h3>
@@ -60,7 +60,7 @@ const JobCardDetails = () => {
       </div>
 
       {/* Right Side: Place A Bid Form */}
-      <section className='w-full lg:max-w-md p-8 bg-white rounded-2xl border border-gray-100 shadow-xl'>
+      <section className='w-full lg:max-w-md p-8 bg-neutral-content rounded-2xl border border-gray-100 shadow-xl'>
         <h2 className='text-2xl font-bold text-gray-800'>Place A Bid</h2>
         <p className='text-sm text-gray-500 mt-1 mb-8'>
           Submit your best proposal for this project.

@@ -7,6 +7,11 @@ import SignInAuth from '../pages/Auth/SignInAuth';
 import SignUpAuth from '../pages/Auth/SignUpAuth';
 import PrivateRoutes from './PrivateRoutes';
 import JobCardDetails from '../components/Card/JobCardDetails';
+import AddJob from '../pages/AddJob';
+import MyPostedJobs from '../pages/MyPostedJobs';
+import UpdateJob from '../pages/UpdateJob';
+import MyBids from '../pages/MyBids';
+import BidRequests from '../pages/BidRequests';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +40,38 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoutes>
             <JobCardDetails />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: '/add-job',
+        element: (
+          <PrivateRoutes>
+            <AddJob />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: '/my-posted-jobs',
+        element: (
+          <PrivateRoutes>
+            <MyPostedJobs />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: '/my-bids',
+        element: (
+          <PrivateRoutes>
+            <MyBids />
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: '/bid-requests',
+        element: (
+          <PrivateRoutes>
+            <BidRequests />
           </PrivateRoutes>
         ),
       },

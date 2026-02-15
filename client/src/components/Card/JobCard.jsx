@@ -4,21 +4,21 @@ const JobCard = () => {
   return (
     <Link
       to={`/job/1`}
-      className='group w-full max-w-sm p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between'
+      className='group w-full max-w-sm p-6 bg-base-300 border border-secondary-content rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between'
     >
       <div>
         {/* Top Section: Category & Deadline */}
         <div className='flex items-center justify-between mb-4'>
-          <span className='px-3 py-1 text-[10px] font-bold tracking-wider text-info uppercase bg-blue-50 rounded-lg'>
+          <span className='px-3 py-1 text-[10px] font-bold tracking-wider text-accent uppercase bg-primary-content rounded-lg'>
             Web Development
           </span>
-          <span className='text-xs font-medium text-gray-400'>
+          <span className='text-xs font-medium text-accent'>
             Ends: 28 May
           </span>
         </div>
 
         {/* Content Section */}
-        <h1 className='text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors'>
+        <h1 className='text-xl font-bold text-primary group-hover:text-secondary transition-colors'>
           E-commerce Website Development
         </h1>
 

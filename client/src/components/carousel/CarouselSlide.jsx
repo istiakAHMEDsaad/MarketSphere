@@ -9,11 +9,11 @@ const CarouselSlide = ({ image, text }) => {
     >
       <div className='flex items-center justify-center w-full h-full bg-neutral-900/70 rounded-2xl'>
         <div className='text-center'>
-          <h1 className='md:text-3xl text-2xl font-semibold text-base-300 dark:text-neutral-200 lg:text-4xl'>
+          <h1 className='md:text-3xl text-2xl font-semibold text-neutral-200 lg:text-4xl'>
             {text}
           </h1>
           <br />
-          <Link to='/add-job' className='btn btn-neutral dark:btn-info'>
+          <Link to='/add-job' className='btn btn-neutral'>
             Explore
           </Link>
         </div>
