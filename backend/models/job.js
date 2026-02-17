@@ -6,6 +6,7 @@ const jobSchema = new mongoose.Schema(
     buyer: {
       email: String,
       name: String,
+      photo: String
     },
     deadline: { type: Date, required: true },
     category: { type: String, required: true },

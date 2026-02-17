@@ -1,9 +1,45 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import toast from 'react-hot-toast';
+import { format } from 'date-fns';
+import { useParams } from 'react-router';
 
 const JobCardDetails = () => {
   const [startDate, setStartDate] = useState(new Date());
+
+  const [job, setJob] = useState(null);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/jobs/jobs/${id}`,
+        );
+        if (data.success) {
+          setJob(data?.job);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const {
+    category,
+    title,
+    deadline,
+    description,
+    max_price,
+    min_price,
+    bid_count,
+    buyer,
+  } = job || {};
 
   return (
     <div className='flex flex-col lg:flex-row justify-center gap-8 items-start min-h-[calc(100vh-306px)] max-w-7xl mx-auto py-12 px-4'>
@@ -11,22 +47,20 @@ const JobCardDetails = () => {
       <div className='flex-1 w-full p-8 bg-neutral-content rounded-2xl border border-gray-100 shadow-sm'>
         <div className='flex items-center justify-between'>
           <span className='text-xs font-semibold tracking-widest text-gray-400 uppercase'>
-            Deadline: 28/05/2024
+            Deadline: {deadline && format(deadline, 'P')}
           </span>
           <span className='px-4 py-1.5 text-xs font-bold text-info uppercase bg-blue-50 rounded-full border border-blue-100'>
-            Web Development
+            {category}
           </span>
         </div>
 
         <div className='mt-6'>
           <h1 className='text-4xl font-extrabold text-gray-900 tracking-tight'>
-            E-commerce Website Development
+            {title}
           </h1>
 
           <p className='mt-6 text-lg leading-relaxed text-gray-600'>
-            Dramatically redefine bleeding-edge infrastructures after
-            client-focused value. Intrinsicly seize user-centric partnerships
-            through out-of-the-box architectures.
+            {description}
           </p>
 
           <div className='mt-8 p-6 bg-neutral-100 rounded-xl'>
@@ -36,25 +70,28 @@ const JobCardDetails = () => {
             <div className='flex items-center gap-4'>
               <img
                 className='rounded-full object-cover w-14 h-14 border-2 border-white shadow-sm'
-                src='https://i.ibb.co.com/qsfs2TW/Ix-I18-R8-Y-400x400.jpg'
+                src={buyer?.photo}
                 alt='avatar'
               />
               <div>
-                <p className='text-md font-bold text-gray-800'>
-                  Programming-Hero Instructors
-                </p>
-                <p className='text-sm text-gray-500'>
-                  instructors@programming-hero.com
-                </p>
+                <p className='text-md font-bold text-gray-800'>{buyer?.name}</p>
+                <p className='text-sm text-gray-500'>{buyer?.email}</p>
               </div>
             </div>
           </div>
 
-          <div className='mt-8'>
-            <span className='text-sm font-medium text-gray-500 block mb-1'>
-              Project Budget Range
-            </span>
-            <p className='text-3xl font-bold text-info'>$500 - $600</p>
+          <div className='mt-8 flex items-center justify-between'>
+            <div>
+              <span className='text-sm font-medium text-gray-500 block mb-1'>
+                Project Budget Range
+              </span>
+              <p className='text-3xl font-bold text-info'>
+                ${min_price} - ${max_price}
+              </p>
+            </div>
+            <div className='text-[18px]'>
+              Bid count: <span className='font-bold'>{bid_count}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,29 @@
+import { useEffect, useState } from 'react';
 import JobCard from '../components/Card/JobCard';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const AllJobs = () => {
+  const [jobs, setJobs] = useState(null);
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/jobs/jobs`,
+        );
+        if (data.success) {
+          setJobs(data.jobs);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  console.log(jobs);
+
   return (
     <div className='container px-6 py-12 mx-auto min-h-[calc(100vh-124px)] flex flex-col justify-between'>
       <div>
@@ -68,12 +91,12 @@ const AllJobs = () => {
 
         {/* Jobs Grid */}
         <div className='grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {[...Array(8)].map((_, i) => (
+          {jobs?.map((job) => (
             <div
-              key={i}
+              key={job._id}
               className='hover:translate-y-[-5px] transition-transform duration-300'
             >
-              <JobCard />
+              <JobCard job={job} />
             </div>
           ))}
         </div>

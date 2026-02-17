@@ -1,31 +1,43 @@
 import { Link } from 'react-router';
+import PropTypes from 'prop-types';
+import { format } from 'date-fns';
 
-const JobCard = () => {
+const JobCard = ({ job }) => {
+  const {
+    _id,
+    category,
+    title,
+    deadline,
+    description,
+    max_price,
+    min_price,
+    bid_count,
+  } = job || {};
+
   return (
     <Link
-      to={`/job/1`}
+      to={`/job/${_id}`}
       className='group w-full max-w-sm p-6 bg-base-300 border border-secondary-content rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between'
     >
       <div>
         {/* Top Section: Category & Deadline */}
         <div className='flex items-center justify-between mb-4'>
           <span className='px-3 py-1 text-[10px] font-bold tracking-wider text-accent uppercase bg-primary-content rounded-lg'>
-            Web Development
+            {category}
           </span>
           <span className='text-xs font-medium text-accent'>
-            Ends: 28 May
+            {/* Ends: {isValid(deadline) ? format(deadline, 'P') : 'No date'} */}
+            Ends: {deadline && format(deadline, 'P')}
           </span>
         </div>
 
         {/* Content Section */}
         <h1 className='text-xl font-bold text-primary group-hover:text-secondary transition-colors'>
-          E-commerce Website Development
+          {title}
         </h1>
 
         <p className='mt-3 text-sm leading-relaxed text-gray-500 line-clamp-3'>
-          Dramatically redefine bleeding-edge infrastructures after
-          client-focused value. Intrinsicly seize user-centric partnerships
-          through out-of-the-box architectures.
+          {description}
         </p>
       </div>
 
@@ -35,7 +47,9 @@ const JobCard = () => {
           <p className='text-xs text-gray-400 uppercase font-semibold tracking-tight'>
             Budget
           </p>
-          <p className='text-lg font-bold text-gray-900'>$500 - $600</p>
+          <p className='text-lg font-bold text-base'>
+            ${min_price} - ${max_price}
+          </p>
         </div>
 
         <div className='text-right'>
@@ -44,12 +58,18 @@ const JobCard = () => {
           </p>
           <div className='flex items-center justify-end gap-1'>
             <span className='h-2 w-2 rounded-full bg-green-500 animate-pulse'></span>
-            <p className='text-sm font-bold text-gray-700'>12 active</p>
+            <p className='text-sm font-bold text-neutral-500'>
+              {bid_count} active
+            </p>
           </div>
         </div>
       </div>
     </Link>
   );
+};
+
+JobCard.propTypes = {
+  job: PropTypes.array.isRequired,
 };
 
 export default JobCard;
