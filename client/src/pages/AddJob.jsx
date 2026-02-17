@@ -1,14 +1,49 @@
+import { useContext } from 'react';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { AppContext } from '../context/AppContext';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const AddJob = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const { user } = useContext(AppContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logic to handle form data
-    console.log('Form Submitted');
+    const form = e.target;
+    const title = form.job_title.value;
+    const email = form.email.value;
+    const deadline = startDate;
+    const category = form.category.value;
+    const min_price = parseFloat(form.min_price.value);
+    const max_price = parseFloat(form.max_price.value);
+    const description = form.description.value;
+
+    const formData = {
+      title,
+      buyer: {
+        email,
+        name: user?.displayName,
+        photo: user?.photoURL,
+      },
+      deadline,
+      category,
+      min_price,
+      max_price,
+      description,
+      bid_count: 0,
+    };
+
+    toast.promise(
+      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData),
+      {
+        loading: 'Adding the product...',
+        success: 'Product added successfully!',
+        error: 'Something went wrong!',
+      },
+    );
   };
 
   return (
@@ -51,6 +86,8 @@ const AddJob = () => {
                   type='email'
                   name='email'
                   placeholder='contact@company.com'
+                  defaultValue={user?.email}
+                  disabled={true}
                   className='input input-bordered w-full transition-all'
                   required
                 />
