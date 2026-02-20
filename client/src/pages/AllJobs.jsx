@@ -11,7 +11,7 @@ const AllJobs = () => {
         const { data } = await axios.get(
           `${import.meta.env.VITE_API_URL}/jobs/jobs`,
         );
-        if (data.success) {
+        if (data?.success) {
           setJobs(data.jobs);
         }
       } catch (error) {
@@ -21,8 +21,6 @@ const AllJobs = () => {
 
     fetchJobs();
   }, []);
-
-  console.log(jobs);
 
   return (
     <div className='container px-6 py-12 mx-auto min-h-[calc(100vh-124px)] flex flex-col justify-between'>
@@ -102,7 +100,7 @@ const AllJobs = () => {
         </div>
       </div>
 
-      {/* Pagination Placeholder (Optional but looks professional) */}
+      {/* Pagination */}
       <div className='flex justify-center mt-12'>
         {/* You can add a pagination component here later */}
       </div>

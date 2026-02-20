@@ -5,10 +5,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 
 const AddJob = () => {
   const [startDate, setStartDate] = useState(new Date());
   const { user } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +42,11 @@ const AddJob = () => {
       axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData),
       {
         loading: 'Adding the product...',
-        success: 'Product added successfully!',
+        success: () => {
+          form.reset();
+          navigate('/my-posted-jobs');
+          ('Product added successfully!');
+        },
         error: 'Something went wrong!',
       },
     );
