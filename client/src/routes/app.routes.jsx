@@ -52,6 +52,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: '/update/:id',
+        element: (
+          <PrivateRoutes>
+            <UpdateJob />
+          </PrivateRoutes>
+        ),
+      },
+      {
         path: '/my-posted-jobs',
         element: (
           <PrivateRoutes>

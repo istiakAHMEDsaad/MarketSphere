@@ -22,7 +22,7 @@ const JobCard = ({ job }) => {
       <div>
         {/* Top Section: Category & Deadline */}
         <div className='flex items-center justify-between mb-4'>
-          <span className='px-3 py-1 text-[10px] font-bold tracking-wider text-accent uppercase bg-primary-content rounded-lg'>
+          <span className='px-2 py-1 text-[10px] font-bold tracking-wider text-accent uppercase bg-primary-content rounded-lg'>
             {category}
           </span>
           <span className='text-xs font-medium text-accent'>

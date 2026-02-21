@@ -24,8 +24,6 @@ const TabCategories = () => {
     fetchData();
   }, []);
 
-  console.log(jobs);
-
   return (
     <div className='container px-6 py-10 mx-auto'>
       <div className='text-center mb-10'>

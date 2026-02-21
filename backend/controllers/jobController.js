@@ -55,3 +55,48 @@ export const getJobsById = async (req, res) => {
       .json({ success: false, message: 'Something went wrong' });
   }
 };
+
+// get job by email
+export const getJobByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // if (req.user.email !== email) {
+    //   return res
+    //     .status(403)
+    //     .json({ success: false, message: 'unauthorized access' });
+    // }
+
+    const jobs = await jobSchema.find({ 'buyer.email': email });
+
+    return res.status(200).json({ success: true, jobs });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Failed' });
+  }
+};
+
+// delete item
+export const deleteItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const job = await jobSchema.findById(id);
+
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
+    // if (req.user.email !== job.buyer.email) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: 'Unauthorized delete',
+    //   });
+    // }
+
+    await jobSchema.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json({ success: true, message: 'Job deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Delete failed' });
+  }
+};
