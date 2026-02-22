@@ -14,7 +14,7 @@ const UpdateJob = () => {
 
   const navigate = useNavigate();
 
-  const {user} = useAuth()
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -61,7 +61,9 @@ const UpdateJob = () => {
     };
 
     toast.promise(
-      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData),
+      axios.patch(`${import.meta.env.VITE_API_URL}/jobs/job/${id}`, formData, {
+        withCredentials: true,
+      }),
       {
         loading: 'Adding the product...',
         success: () => {
@@ -74,14 +76,8 @@ const UpdateJob = () => {
     );
   };
 
-  const {
-    category,
-    title,
-    description,
-    max_price,
-    min_price,
-    buyer,
-  } = job || {};
+  const { category, title, description, max_price, min_price, buyer } =
+    job || {};
 
   return (
     <div className='flex justify-center items-center min-h-[calc(100vh-306px)] my-12'>
@@ -90,7 +86,7 @@ const UpdateJob = () => {
           Update a Job
         </h2>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
             <div>
               <label className='text-gray-700 ' htmlFor='job_title'>
@@ -145,7 +141,7 @@ const UpdateJob = () => {
                 </select>
               </div>
             )}
-            
+
             <div>
               <label className='text-gray-700 ' htmlFor='min_price'>
                 Minimum Price
@@ -186,7 +182,10 @@ const UpdateJob = () => {
             ></textarea>
           </div>
           <div className='flex justify-end mt-6'>
-            <button className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'>
+            <button
+              type='submit'
+              className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'
+            >
               Save
             </button>
           </div>

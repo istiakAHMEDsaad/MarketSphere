@@ -153,3 +153,56 @@ export const deleteItem = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Delete failed' });
   }
 };
+
+// for put method \\
+/*
+export const replaceJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid Job ID',
+      });
+    }
+
+    const job = await Job.findById(id);
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found',
+      });
+    }
+
+    if (req.user.email !== job.buyer.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized access',
+      });
+    }
+
+    const replacedJob = await Job.findOneAndReplace(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Job replaced successfully',
+      replacedJob,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to replace job',
+    });
+  }
+};
+*/
