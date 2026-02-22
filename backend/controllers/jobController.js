@@ -3,19 +3,31 @@ import jobSchema from '../models/job.js';
 // add jobs
 export const addJob = async (req, res) => {
   try {
-    const jobData = await jobSchema.create(req.body);
-    return res
-      .status(200)
-      .json({ success: true, message: 'Job data added successfully', jobData });
+    const job = req.body;
+
+    if (req.user.email !== job.buyer.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden access',
+      });
+    }
+
+    const jobData = await jobSchema.create(job);
+
+    res.status(201).json({
+      success: true,
+      message: 'Job added successfully',
+      jobData,
+    });
   } catch (error) {
-    console.log('Job data not added', error);
-    return res
-      .status(500)
-      .json({ success: false, message: 'Job data failed to add' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add job',
+    });
   }
 };
 
-// get jobs
+// get all jobs
 export const getJobs = async (req, res) => {
   try {
     const jobs = await jobSchema.find();
@@ -61,17 +73,58 @@ export const getJobByEmail = async (req, res) => {
   try {
     const { email } = req.params;
 
-    // if (req.user.email !== email) {
-    //   return res
-    //     .status(403)
-    //     .json({ success: false, message: 'unauthorized access' });
-    // }
+    if (req.user.email !== email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized access',
+      });
+    }
 
     const jobs = await jobSchema.find({ 'buyer.email': email });
 
     return res.status(200).json({ success: true, jobs });
   } catch (error) {
     return res.status(500).json({ success: false, message: 'Failed' });
+  }
+};
+
+// update an item
+export const updateJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const jobData = req.body;
+    const job = await jobSchema.findById(id);
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found',
+      });
+    }
+
+    if (req.user.email !== job.buyer.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized access',
+      });
+    }
+
+    const updatedJob = await jobSchema.findByIdAndUpdate(
+      id,
+      { $set: jobData },
+      { new: true, runValidators: true },
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Job updated successfully',
+      updatedJob,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update job',
+    });
   }
 };
 
@@ -85,12 +138,12 @@ export const deleteItem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
 
-    // if (req.user.email !== job.buyer.email) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: 'Unauthorized delete',
-    //   });
-    // }
+    if (req.user.email !== job.buyer.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized to delete',
+      });
+    }
 
     await jobSchema.findByIdAndDelete(id);
     return res

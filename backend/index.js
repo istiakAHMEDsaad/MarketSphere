@@ -4,6 +4,7 @@ import connectToDB from './db/db.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import jobRouter from './routes/jobRoute.js';
+import authRouter from './routes/authRoutes.js';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 });
 
 // routes
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', jobRouter);
 
 app.listen(PORT, async () => {

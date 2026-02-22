@@ -14,6 +14,7 @@ const MyPostedJobs = () => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/jobs/user-jobs/${user?.email}`,
+        { withCredentials: true },
       );
       if (data?.success) {
         setJob(data.jobs);
@@ -31,6 +32,7 @@ const MyPostedJobs = () => {
     try {
       const { data } = await axios.delete(
         `${import.meta.env.VITE_API_URL}/jobs/job/${id}`,
+        { withCredentials: true },
       );
 
       if (data.success) {

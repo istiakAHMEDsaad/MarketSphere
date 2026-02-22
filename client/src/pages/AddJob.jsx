@@ -39,7 +39,9 @@ const AddJob = () => {
     };
 
     toast.promise(
-      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData),
+      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData, {
+        withCredentials: true,
+      }),
       {
         loading: 'Adding the product...',
         success: () => {

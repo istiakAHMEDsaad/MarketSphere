@@ -3,14 +3,18 @@ import { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import useAuth from '../hooks/useAuth';
 
 const UpdateJob = () => {
   const [startDate, setStartDate] = useState(null);
-
   const [job, setJob] = useState(null);
 
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  const {user} = useAuth()
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -20,7 +24,7 @@ const UpdateJob = () => {
         );
         if (data.success) {
           setJob(data?.job);
-          setStartDate(data?.deadline && new Date(data?.deadline));
+          setStartDate(data?.job.deadline && new Date(data?.job.deadline));
         }
       } catch (error) {
         toast.error(error.message);
@@ -30,14 +34,52 @@ const UpdateJob = () => {
     fetchJobs();
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const title = form.job_title.value;
+    const email = form.email.value;
+    const deadline = startDate;
+    const category = form.category.value;
+    const min_price = parseFloat(form.min_price.value);
+    const max_price = parseFloat(form.max_price.value);
+    const description = form.description.value;
+
+    const formData = {
+      title,
+      buyer: {
+        email,
+        name: user?.displayName,
+        photo: user?.photoURL,
+      },
+      deadline,
+      category,
+      min_price,
+      max_price,
+      description,
+      bid_count: 0,
+    };
+
+    toast.promise(
+      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData),
+      {
+        loading: 'Adding the product...',
+        success: () => {
+          form.reset();
+          navigate('/my-posted-jobs');
+          ('Product added successfully!');
+        },
+        error: 'Something went wrong!',
+      },
+    );
+  };
+
   const {
     category,
     title,
-    deadline,
     description,
     max_price,
     min_price,
-    bid_count,
     buyer,
   } = job || {};
 
@@ -103,6 +145,7 @@ const UpdateJob = () => {
                 </select>
               </div>
             )}
+            
             <div>
               <label className='text-gray-700 ' htmlFor='min_price'>
                 Minimum Price
@@ -111,6 +154,7 @@ const UpdateJob = () => {
                 id='min_price'
                 name='min_price'
                 type='number'
+                defaultValue={min_price}
                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
               />
             </div>
@@ -123,10 +167,12 @@ const UpdateJob = () => {
                 id='max_price'
                 name='max_price'
                 type='number'
+                defaultValue={max_price}
                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
               />
             </div>
           </div>
+
           <div className='flex flex-col gap-2 mt-4'>
             <label className='text-gray-700 ' htmlFor='description'>
               Description
@@ -135,6 +181,7 @@ const UpdateJob = () => {
               className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
               name='description'
               id='description'
+              defaultValue={description}
               cols='30'
             ></textarea>
           </div>

@@ -1,13 +1,14 @@
+import axios from 'axios';
 import {
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
+  onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   updateProfile,
-  onAuthStateChanged,
 } from 'firebase/auth';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
@@ -59,6 +60,7 @@ const AppProvider = ({ children }) => {
   };
 
   // setting an observer:
+  /*
   useEffect(() => {
     const observer = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -71,6 +73,24 @@ const AppProvider = ({ children }) => {
       observer();
     };
   });
+  */
+  useEffect(() => {
+    const observer = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser?.email) {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/jwt`,
+          { email: currentUser.email },
+          { withCredentials: true },
+        );
+      }
+
+      setLoading(false);
+    });
+
+    return () => observer();
+  }, []);
 
   const value = {
     user,
