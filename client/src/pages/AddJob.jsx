@@ -1,56 +1,58 @@
-import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import useAuth from '../hooks/useAuth';
+import axiosInstance from '../utils/axiosInstance';
 
 const AddJob = () => {
   const [startDate, setStartDate] = useState(new Date());
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e) => {
+  const addJob = useMutation({
+    mutationFn: async (formData) => {
+      const { data } = await axiosInstance.post('/jobs/add-job', formData);
+      return data;
+    },
+
+    onSuccess: () => {
+      toast.success('Job added successfully');
+      queryClient.invalidateQueries(['myJobs', user?.email]);
+      queryClient.invalidateQueries(['allJobs']);
+      document.querySelector('form').reset();
+      navigate('/my-posted-jobs');
+    },
+
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+
     const form = e.target;
-    const title = form.job_title.value;
-    const email = form.email.value;
-    const deadline = startDate;
-    const category = form.category.value;
-    const min_price = parseFloat(form.min_price.value);
-    const max_price = parseFloat(form.max_price.value);
-    const description = form.description.value;
 
     const formData = {
-      title,
+      title: form.job_title.value,
       buyer: {
-        email,
+        email: form.email.value,
         name: user?.displayName,
         photo: user?.photoURL,
       },
-      deadline,
-      category,
-      min_price,
-      max_price,
-      description,
+      deadline: startDate,
+      category: form.category.value,
+      min_price: parseFloat(form.min_price.value),
+      max_price: parseFloat(form.max_price.value),
+      description: form.description.value,
       bid_count: 0,
     };
 
-    toast.promise(
-      axios.post(`${import.meta.env.VITE_API_URL}/jobs/add-job`, formData, {
-        withCredentials: true,
-      }),
-      {
-        loading: 'Adding the product...',
-        success: () => {
-          form.reset();
-          navigate('/my-posted-jobs');
-          ('Product added successfully!');
-        },
-        error: 'Something went wrong!',
-      },
-    );
+    addJob.mutate(formData);
   };
 
   return (
@@ -179,7 +181,11 @@ const AddJob = () => {
             {/* Submit Button */}
             <div className='card-actions justify-end mt-8'>
               <button className='btn btn-info btn-wide text-white font-bold hover:scale-105 transition-all'>
-                Save & Post Job
+                {addJob.isPending ? (
+                  <span className='loading loading-spinner loading-xs'></span>
+                ) : (
+                  'Save & Post Job'
+                )}
               </button>
             </div>
           </form>

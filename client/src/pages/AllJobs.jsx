@@ -1,26 +1,28 @@
-import { useEffect, useState } from 'react';
 import JobCard from '../components/Card/JobCard';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import axiosInstance from '../utils/axiosInstance';
+import { useQuery } from '@tanstack/react-query';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AllJobs = () => {
-  const [jobs, setJobs] = useState(null);
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/jobs`,
-        );
-        if (data?.success) {
-          setJobs(data.jobs);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
+  const fetchAllJob = async () => {
+    const { data } = await axiosInstance.get('/jobs/jobs');
+    return data.jobs;
+  };
 
-    fetchJobs();
-  }, []);
+  const {
+    data: jobs,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['allJobs'],
+    queryFn: fetchAllJob,
+  });
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) {
+    toast.error('Failed to fetch the data!');
+  }
 
   return (
     <div className='container px-6 py-12 mx-auto min-h-[calc(100vh-124px)] flex flex-col justify-between'>

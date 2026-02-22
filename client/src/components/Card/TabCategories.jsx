@@ -1,28 +1,30 @@
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import JobCard from './JobCard';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import axiosInstance from '../../utils/axiosInstance';
+import LoadingSpinner from '../LoadingSpinner';
+import JobCard from './JobCard';
 
 const TabCategories = () => {
-  const [jobs, setJobs] = useState(null);
+  const fetchAllJob = async () => {
+    const { data } = await axiosInstance.get('/jobs/jobs');
+    return data.jobs;
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/jobs`,
-        );
-        if (data?.success) {
-          setJobs(data.jobs);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
+  const {
+    data: jobs,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['allJobs'],
+    queryFn: fetchAllJob,
+  });
 
-    fetchData();
-  }, []);
+  if (isLoading) return <LoadingSpinner />;
+
+  if (isError) {
+    toast.error('Failed to fetch the data!');
+  }
 
   return (
     <div className='container px-6 py-10 mx-auto'>
