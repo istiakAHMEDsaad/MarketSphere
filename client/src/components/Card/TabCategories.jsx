@@ -1,24 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import axiosInstance from '../../utils/axiosInstance';
+import useAllJobs from '../../hooks/dataHooks/useAllJobs';
 import LoadingSpinner from '../LoadingSpinner';
 import JobCard from './JobCard';
 
 const TabCategories = () => {
-  const fetchAllJob = async () => {
-    const { data } = await axiosInstance.get('/jobs/jobs');
-    return data.jobs;
-  };
-
-  const {
-    data: jobs,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['allJobs'],
-    queryFn: fetchAllJob,
-  });
+  const { data: jobs, isLoading, isError } = useAllJobs();
 
   if (isLoading) return <LoadingSpinner />;
 

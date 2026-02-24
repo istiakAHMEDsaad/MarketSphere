@@ -1,38 +1,32 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router';
+import LoadingSpinner from '../components/LoadingSpinner';
+import useJobDetails from '../hooks/dataHooks/useJobDetails';
 import useAuth from '../hooks/useAuth';
 
 const UpdateJob = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [job, setJob] = useState(null);
-
   const { id } = useParams();
-
   const navigate = useNavigate();
-
   const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/jobs/${id}`,
-        );
-        if (data.success) {
-          setJob(data?.job);
-          setStartDate(data?.job.deadline && new Date(data?.job.deadline));
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
+  const { data: job, isLoading, isError } = useJobDetails(id);
 
-    fetchJobs();
-  }, []);
+  //Nullish Coalescing
+  const [startDate, setStartDate] = useState(() =>
+    job?.deadline ? new Date(job.deadline) : null,
+  );
+
+  const deadlineDate =
+    startDate ?? (job?.deadline ? new Date(job.deadline) : null);
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) {
+    toast.error('Failed to fetch the data!');
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,7 +113,7 @@ const UpdateJob = () => {
 
               <DatePicker
                 className='border p-2 rounded-md'
-                selected={startDate}
+                selected={deadlineDate}
                 onChange={(date) => setStartDate(date)}
               />
             </div>

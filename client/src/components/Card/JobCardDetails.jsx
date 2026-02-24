@@ -1,34 +1,23 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast from 'react-hot-toast';
-import { format } from 'date-fns';
 import { useParams } from 'react-router';
+import useJobDetails from '../../hooks/dataHooks/useJobDetails';
+import LoadingSpinner from '../LoadingSpinner';
 
 const JobCardDetails = () => {
   const [startDate, setStartDate] = useState(new Date());
 
-  const [job, setJob] = useState(null);
-
   const { id } = useParams();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/jobs/jobs/${id}`,
-        );
-        if (data.success) {
-          setJob(data?.job);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
+  const { data: job, isLoading, isError } = useJobDetails(id);
 
-    fetchJobs();
-  }, []);
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) {
+    toast.error('Failed to fetch the data!');
+  }
 
   const {
     category,

@@ -1,23 +1,10 @@
-import JobCard from '../components/Card/JobCard';
 import toast from 'react-hot-toast';
-import axiosInstance from '../utils/axiosInstance';
-import { useQuery } from '@tanstack/react-query';
+import JobCard from '../components/Card/JobCard';
 import LoadingSpinner from '../components/LoadingSpinner';
+import useAllJobs from '../hooks/dataHooks/useAllJobs';
 
 const AllJobs = () => {
-  const fetchAllJob = async () => {
-    const { data } = await axiosInstance.get('/jobs/jobs');
-    return data.jobs;
-  };
-
-  const {
-    data: jobs,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['allJobs'],
-    queryFn: fetchAllJob,
-  });
+  const { data: jobs, isLoading, isError } = useAllJobs();
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) {
