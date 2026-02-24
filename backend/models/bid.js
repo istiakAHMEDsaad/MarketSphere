@@ -2,15 +2,41 @@ import mongoose from 'mongoose';
 
 const bidSchema = new mongoose.Schema(
   {
-    email: String,
     jobId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Job',
+      required: true,
     },
-    buyer: String,
+
+    title: String,
+    category: String,
+
+    price: {
+      type: Number,
+      required: true,
+    },
+
+    email: {
+      type: String, // bidder email
+      required: true,
+    },
+
+    buyer: {
+      type: String, // job owner email
+      required: true,
+    },
+
+    comment: String,
+
+    deadline: {
+      type: Date,
+      required: true,
+    },
+
     status: {
       type: String,
-      default: 'pending',
+      enum: ['Pending', 'In Progress', 'Completed'],
+      default: 'Pending',
     },
   },
   { timestamps: true },

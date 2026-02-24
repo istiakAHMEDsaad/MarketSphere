@@ -94,6 +94,7 @@ const JobCardDetails = () => {
 
         <form className='space-y-6'>
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1'>
+            {/* price for bid */}
             <div>
               <label
                 className='text-sm font-semibold text-gray-700 ml-1'
@@ -104,6 +105,8 @@ const JobCardDetails = () => {
               <input
                 id='price'
                 type='number'
+                name='price'
+                required
                 placeholder='e.g. 550'
                 className='block w-full px-4 py-3 mt-2 text-gray-700 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-info focus:bg-white focus:outline-none transition-all'
               />
@@ -118,6 +121,7 @@ const JobCardDetails = () => {
               </label>
               <input
                 id='emailAddress'
+                name='email'
                 type='email'
                 disabled
                 placeholder='user@example.com'
@@ -135,6 +139,7 @@ const JobCardDetails = () => {
             </label>
             <textarea
               id='comment'
+              name='comment'
               rows='3'
               placeholder='Describe your experience with similar projects...'
               className='block w-full px-4 py-3 mt-2 text-gray-700 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-info focus:bg-white focus:outline-none transition-all'
