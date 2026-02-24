@@ -1,18 +1,45 @@
-import { format } from 'date-fns';
+import { compareAsc, format } from 'date-fns';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import toast from 'react-hot-toast';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import useJobDetails from '../../hooks/dataHooks/useJobDetails';
 import LoadingSpinner from '../LoadingSpinner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useAuth from '../../hooks/useAuth';
+import axiosInstance from '../../utils/axiosInstance';
 
 const JobCardDetails = () => {
+  const { id } = useParams();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [startDate, setStartDate] = useState(new Date());
 
-  const { id } = useParams();
-
   const { data: job, isLoading, isError } = useJobDetails(id);
+
+  const placeBidMutation = useMutation({
+    mutationFn: async (bidData) => {
+      const { data } = await axiosInstance.post('/bids', bidData);
+      return data;
+    },
+
+    onSuccess: () => {
+      toast.success('Bid Successful!');
+
+      // invalidate related queries
+      queryClient.invalidateQueries(['myJobs', user?.email]);
+      queryClient.invalidateQueries(['allJobs']);
+
+      navigate('/my-bids');
+    },
+
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || 'Bid Failed');
+    },
+  });
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) {
@@ -20,6 +47,7 @@ const JobCardDetails = () => {
   }
 
   const {
+    _id,
     category,
     title,
     deadline,
@@ -30,13 +58,51 @@ const JobCardDetails = () => {
     buyer,
   } = job || {};
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const price = Number(form.price.value);
+    const comment = form.comment.value;
+
+    // Buyer cannot bid
+    if (user?.email === buyer?.email)
+      return toast.error('You cannot bid on your own job!');
+
+    // Deadline crossed
+    if (compareAsc(new Date(), new Date(deadline)) === 1)
+      return toast.error('Deadline crossed!');
+
+    // Price above max
+    if (price > max_price)
+      return toast.error(`Offer must be under ${max_price}$`);
+
+    // Offered deadline beyond job deadline
+    if (compareAsc(new Date(startDate), new Date(deadline)) === 1)
+      return toast.error('Delivery date must be within job deadline');
+
+    const bidData = {
+      price,
+      email: user?.email,
+      comment,
+      deadline: startDate,
+      jobId: _id,
+      title,
+      category,
+      status: 'Pending',
+      buyer: buyer?.email,
+    };
+
+    placeBidMutation.mutate(bidData);
+  };
+
   return (
     <div className='flex flex-col lg:flex-row justify-center gap-8 items-start min-h-[calc(100vh-306px)] max-w-7xl mx-auto py-12 px-4'>
       {/* Left Side: Job Details */}
       <div className='flex-1 w-full p-8 bg-neutral-content rounded-2xl border border-gray-100 shadow-sm'>
         <div className='flex items-center justify-between'>
           <span className='text-xs font-semibold tracking-widest text-gray-400 uppercase'>
-            Deadline: {deadline && format(deadline, 'P')}
+            Deadline: {deadline && format(new Date(deadline), 'P')}
           </span>
           <span className='px-4 py-1.5 text-xs font-bold text-info uppercase bg-blue-50 rounded-full border border-blue-100'>
             {category}
@@ -92,7 +158,7 @@ const JobCardDetails = () => {
           Submit your best proposal for this project.
         </p>
 
-        <form className='space-y-6'>
+        <form onSubmit={handleSubmit} className='space-y-6'>
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1'>
             {/* price for bid */}
             <div>
@@ -124,7 +190,7 @@ const JobCardDetails = () => {
                 name='email'
                 type='email'
                 disabled
-                placeholder='user@example.com'
+                value={user?.email}
                 className='block w-full px-4 py-3 mt-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-xl cursor-not-allowed'
               />
             </div>
