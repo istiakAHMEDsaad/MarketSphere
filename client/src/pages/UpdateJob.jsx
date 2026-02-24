@@ -1,186 +1,211 @@
-import axios from 'axios';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router';
 import LoadingSpinner from '../components/LoadingSpinner';
 import useJobDetails from '../hooks/dataHooks/useJobDetails';
 import useAuth from '../hooks/useAuth';
+import axiosInstance from '../utils/axiosInstance';
 
 const UpdateJob = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
   const { data: job, isLoading, isError } = useJobDetails(id);
 
-  //Nullish Coalescing
-  const [startDate, setStartDate] = useState(() =>
-    job?.deadline ? new Date(job.deadline) : null,
-  );
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm();
 
-  const deadlineDate =
-    startDate ?? (job?.deadline ? new Date(job.deadline) : null);
+  const minPrice = watch('min_price');
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) {
-    toast.error('Failed to fetch the data!');
-  }
+  useEffect(() => {
+    if (job) {
+      reset({
+        job_title: job.title,
+        email: job?.buyer?.email,
+        category: job.category,
+        deadline: job.deadline ? new Date(job.deadline) : null,
+        min_price: job.min_price,
+        max_price: job.max_price,
+        description: job.description,
+      });
+    }
+  }, [job, reset]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const title = form.job_title.value;
-    const email = form.email.value;
-    const deadline = startDate;
-    const category = form.category.value;
-    const min_price = parseFloat(form.min_price.value);
-    const max_price = parseFloat(form.max_price.value);
-    const description = form.description.value;
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
+      const { data } = await axiosInstance.patch(`/jobs/job/${id}`, formData);
+      return data;
+    },
 
-    const formData = {
-      title,
+    onSuccess: () => {
+      toast.success('Job updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['myJobs', user?.email] });
+      queryClient.invalidateQueries({ queryKey: ['allJobs'] });
+      navigate('/my-posted-jobs');
+    },
+
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Update failed');
+    },
+  });
+
+  const onSubmit = (data) => {
+    const updatedJob = {
+      title: data.job_title,
       buyer: {
-        email,
+        email: data.email,
         name: user?.displayName,
         photo: user?.photoURL,
       },
-      deadline,
-      category,
-      min_price,
-      max_price,
-      description,
-      bid_count: 0,
+      deadline: data.deadline,
+      category: data.category,
+      min_price: parseFloat(data.min_price),
+      max_price: parseFloat(data.max_price),
+      description: data.description,
     };
 
-    toast.promise(
-      axios.patch(`${import.meta.env.VITE_API_URL}/jobs/job/${id}`, formData, {
-        withCredentials: true,
-      }),
-      {
-        loading: 'Adding the product...',
-        success: () => {
-          form.reset();
-          navigate('/my-posted-jobs');
-          ('Product added successfully!');
-        },
-        error: 'Something went wrong!',
-      },
-    );
+    mutate(updatedJob);
   };
 
-  const { category, title, description, max_price, min_price, buyer } =
-    job || {};
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return toast.error('Failed to fetch job');
 
   return (
     <div className='flex justify-center items-center min-h-[calc(100vh-306px)] my-12'>
-      <section className=' p-2 md:p-6 mx-auto bg-white rounded-md shadow-md '>
-        <h2 className='text-lg font-semibold text-gray-700 capitalize '>
-          Update a Job
-        </h2>
+      <section className='p-6 bg-white rounded-md shadow-md w-full max-w-3xl'>
+        <h2 className='text-xl font-semibold mb-6'>Update Job</h2>
 
-        <form onSubmit={handleSubmit}>
-          <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+            {/* Job Title */}
             <div>
-              <label className='text-gray-700 ' htmlFor='job_title'>
-                Job Title
-              </label>
+              <label className='font-semibold'>Job Title</label>
               <input
-                id='job_title'
-                name='job_title'
-                type='text'
-                defaultValue={title}
-                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
+                {...register('job_title', {
+                  required: 'Title is required',
+                })}
+                className='input input-bordered w-full'
               />
+              {errors.job_title && (
+                <p className='text-red-500 text-sm'>
+                  {errors.job_title.message}
+                </p>
+              )}
             </div>
 
+            {/* Email */}
             <div>
-              <label className='text-gray-700 ' htmlFor='emailAddress'>
-                Email Address
-              </label>
+              <label className='font-semibold'>Email</label>
               <input
-                id='emailAddress'
-                type='email'
-                name='email'
-                defaultValue={buyer?.email}
+                {...register('email')}
                 disabled
-                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring cursor-not-allowed'
-              />
-            </div>
-            <div className='flex flex-col gap-2 '>
-              <label className='text-gray-700'>Deadline</label>
-
-              <DatePicker
-                className='border p-2 rounded-md'
-                selected={deadlineDate}
-                onChange={(date) => setStartDate(date)}
+                className='input input-bordered w-full bg-gray-100'
               />
             </div>
 
-            {category && (
-              <div className='flex flex-col gap-2 '>
-                <label className='text-gray-700 ' htmlFor='category'>
-                  Category
-                </label>
-                <select
-                  name='category'
-                  id='category'
-                  defaultValue={category}
-                  className='border p-2 rounded-md'
-                >
-                  <option value='Web Development'>Web Development</option>
-                  <option value='Graphics Design'>Graphics Design</option>
-                  <option value='Digital Marketing'>Digital Marketing</option>
-                </select>
-              </div>
-            )}
-
+            {/* Category */}
             <div>
-              <label className='text-gray-700 ' htmlFor='min_price'>
-                Minimum Price
-              </label>
+              <label className='font-semibold'>Category</label>
+              <select
+                {...register('category')}
+                className='select select-bordered w-full'
+              >
+                <option value='Web Development'>Web Development</option>
+                <option value='Graphics Design'>Graphics Design</option>
+                <option value='Digital Marketing'>Digital Marketing</option>
+              </select>
+            </div>
+
+            {/* Deadline */}
+            <div>
+              <label className='font-semibold flex'>Deadline</label>
+              <Controller
+                control={control}
+                name='deadline'
+                rules={{ required: 'Deadline is required' }}
+                render={({ field }) => (
+                  <DatePicker
+                    className='input input-bordered w-full'
+                    selected={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                )}
+              />
+              {errors.deadline && (
+                <p className='text-red-500 text-sm'>
+                  {errors.deadline.message}
+                </p>
+              )}
+            </div>
+
+            {/* Min Price */}
+            <div>
+              <label className='font-semibold'>Minimum Price</label>
               <input
-                id='min_price'
-                name='min_price'
                 type='number'
-                defaultValue={min_price}
-                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
+                {...register('min_price', {
+                  required: 'Minimum price required',
+                })}
+                className='input input-bordered w-full'
               />
             </div>
 
+            {/* Max Price */}
             <div>
-              <label className='text-gray-700 ' htmlFor='max_price'>
-                Maximum Price
-              </label>
+              <label className='font-semibold'>Maximum Price</label>
               <input
-                id='max_price'
-                name='max_price'
                 type='number'
-                defaultValue={max_price}
-                className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
+                {...register('max_price', {
+                  required: 'Maximum price required',
+                  validate: (value) =>
+                    parseFloat(value) >= parseFloat(minPrice) ||
+                    'Max must be greater than Min',
+                })}
+                className='input input-bordered w-full'
               />
+              {errors.max_price && (
+                <p className='text-red-500 text-sm'>
+                  {errors.max_price.message}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className='flex flex-col gap-2 mt-4'>
-            <label className='text-gray-700 ' htmlFor='description'>
-              Description
-            </label>
+          {/* Description */}
+          <div className='mt-6'>
+            <label className='font-semibold'>Description</label>
             <textarea
-              className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
-              name='description'
-              id='description'
-              defaultValue={description}
-              cols='30'
-            ></textarea>
+              {...register('description', {
+                required: 'Description required',
+              })}
+              className='textarea textarea-bordered w-full h-32'
+            />
+            {errors.description && (
+              <p className='text-red-500 text-sm'>
+                {errors.description.message}
+              </p>
+            )}
           </div>
-          <div className='flex justify-end mt-6'>
+
+          <div className='text-right mt-8'>
             <button
               type='submit'
-              className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'
+              disabled={isPending}
+              className='btn btn-primary'
             >
-              Save
+              {isPending ? 'Updating...' : 'Save Changes'}
             </button>
           </div>
         </form>
