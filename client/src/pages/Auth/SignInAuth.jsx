@@ -125,7 +125,7 @@ const SignInAuth = () => {
               type='email'
               name='email'
               placeholder='Email id'
-              className='bg-transparent text-gray-100 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
           </div>
@@ -148,7 +148,7 @@ const SignInAuth = () => {
               type={showPass ? 'text' : 'password'}
               name='password'
               placeholder='Password'
-              className='bg-transparent text-gray-100 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
             <button

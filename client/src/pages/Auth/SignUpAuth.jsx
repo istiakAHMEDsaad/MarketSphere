@@ -166,7 +166,7 @@ const SignUpAuth = () => {
               type='text'
               name='name'
               placeholder='User Name'
-              className='bg-transparent text-gray-200 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
           </div>
@@ -192,7 +192,7 @@ const SignUpAuth = () => {
               type='text'
               name='photo'
               placeholder='Image Url'
-              className='bg-transparent text-gray-200 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
           </div>
@@ -218,7 +218,7 @@ const SignUpAuth = () => {
               type='email'
               name='email'
               placeholder='Email id'
-              className='bg-transparent text-gray-200 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
           </div>
@@ -244,7 +244,7 @@ const SignUpAuth = () => {
               type={showPass ? 'text' : 'password'}
               name='password'
               placeholder='Password'
-              className='bg-transparent text-gray-200 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
             <button
@@ -277,7 +277,7 @@ const SignUpAuth = () => {
               type={showPassTwo ? 'text' : 'password'}
               name='confirmpassword'
               placeholder='Confirm Password'
-              className='bg-transparent text-gray-200 placeholder-gray-500/80 outline-none text-sm w-full h-full'
+              className='bg-transparent placeholder-gray-500/80 outline-none text-sm w-full h-full'
               required
             />
             <button
