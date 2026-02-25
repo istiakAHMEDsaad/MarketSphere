@@ -1,98 +1,176 @@
+import { useMemo, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import JobCard from '../components/Card/JobCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import useAllJobs from '../hooks/dataHooks/useAllJobs';
 
+const ITEMS_PER_PAGE = 6;
+
 const AllJobs = () => {
-  const { data: jobs, isLoading, isError } = useAllJobs();
+  const { data: jobs = [], isLoading, isError } = useAllJobs();
+
+  // ================= STATE =================
+  const [category, setCategory] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ================= DEBOUNCE =================
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) {
     toast.error('Failed to fetch the data!');
   }
 
+  // ================= FILTER + SORT =================
+  const filteredJobs = useMemo(() => {
+    let filtered = [...jobs];
+
+    // Filter by category
+    if (category) {
+      filtered = filtered.filter(
+        (job) => job.category === category
+      );
+    }
+
+    // Search by title
+    if (debouncedSearch) {
+      filtered = filtered.filter((job) =>
+        job.title
+          ?.toLowerCase()
+          .includes(debouncedSearch.toLowerCase())
+      );
+    }
+
+    // Sort by deadline
+    if (sortOrder === 'asc') {
+      filtered.sort(
+        (a, b) => new Date(a.deadline) - new Date(b.deadline)
+      );
+    } else if (sortOrder === 'dsc') {
+      filtered.sort(
+        (a, b) => new Date(b.deadline) - new Date(a.deadline)
+      );
+    }
+
+    return filtered;
+  }, [jobs, category, debouncedSearch, sortOrder]);
+
+  // ================= PAGINATION =================
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // ================= RESET =================
+  const handleReset = () => {
+    setCategory('');
+    setSortOrder('');
+    setSearch('');
+    setCurrentPage(1);
+  };
+
   return (
-    <div className='container px-6 py-12 mx-auto min-h-[calc(100vh-124px)] flex flex-col justify-between'>
-      <div>
-        {/* Header Section */}
-        <div className='text-center mb-10'>
-          <h1 className='text-3xl font-semibold text-info capitalize lg:text-4xl'>
-            Explore All Jobs
-          </h1>
-          <p className='max-w-2xl mx-auto mt-4 text-base'>
-            Find your next career move by filtering through categories or
-            searching for specific roles.
+    <div className='container px-6 py-12 mx-auto min-h-[calc(100vh-124px)]'>
+
+      {/* Header */}
+      <div className='text-center mb-10'>
+        <h1 className='text-3xl font-semibold text-info lg:text-4xl'>
+          Explore All Jobs
+        </h1>
+        <p className='max-w-2xl mx-auto mt-4 text-base'>
+          Find your next career move.
+        </p>
+      </div>
+
+      {/* FILTER SECTION */}
+      <div className='flex flex-col md:flex-row justify-center items-center gap-4'>
+
+        {/* Category */}
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className='select select-bordered w-full md:w-auto'
+        >
+          <option value=''>Filter By Category</option>
+          <option value='Web Development'>Web Development</option>
+          <option value='Graphics Design'>Graphics Design</option>
+          <option value='Digital Marketing'>Digital Marketing</option>
+        </select>
+
+        {/* Search */}
+        <input
+          type='text'
+          placeholder='Search jobs...'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className='input input-bordered w-full md:w-1/3'
+        />
+
+        {/* Sort */}
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className='select select-bordered w-full md:w-auto'
+        >
+          <option value=''>Sort By Deadline</option>
+          <option value='dsc'>Newest First</option>
+          <option value='asc'>Oldest First</option>
+        </select>
+
+        {/* Reset */}
+        <button
+          onClick={handleReset}
+          className='btn btn-outline btn-error'
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* JOB GRID */}
+      <div className='grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+        {paginatedJobs.length > 0 ? (
+          paginatedJobs.map((job) => (
+            <JobCard key={job._id} job={job} />
+          ))
+        ) : (
+          <p className='text-center col-span-full text-gray-500'>
+            No jobs found.
           </p>
-        </div>
+        )}
+      </div>
 
-        {/* Filter Section - Glassmorphism Style */}
-        <div className='flex flex-col md:flex-row justify-center items-center gap-4'>
-          {/* Category Filter */}
-          <div className='w-full md:w-auto'>
-            <select
-              name='category'
-              id='category'
-              className='w-full border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-3.5 rounded-xl bg-white shadow-sm transition-all outline-none text-gray-600'
-            >
-              <option value=''>Filter By Category</option>
-              <option value='Web Development'>Web Development</option>
-              <option value='Graphics Design'>Graphics Design</option>
-              <option value='Digital Marketing'>Digital Marketing</option>
-            </select>
-          </div>
-
-          {/* Search Bar */}
-          <form className='w-full md:w-1/3'>
-            <div className='flex p-1.5 overflow-hidden border border-gray-200 rounded-xl bg-white focus-within:ring-2 focus-within:ring-blue-400/20 focus-within:border-blue-400 transition-all shadow-sm'>
-              <input
-                className='px-4 py-2 text-gray-700 placeholder-gray-400 bg-white outline-none w-full'
-                type='text'
-                name='search'
-                placeholder='Search jobs...'
-                aria-label='Search jobs'
-              />
-              <button className='px-6 py-2 text-sm font-medium tracking-wider text-white uppercase transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none'>
-                Search
+      {/* PAGINATION (DaisyUI) */}
+      {totalPages > 1 && (
+        <div className='flex justify-center mt-12'>
+          <div className='join'>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`join-item btn ${
+                  currentPage === index + 1
+                    ? 'btn-active'
+                    : ''
+                }`}
+              >
+                {index + 1}
               </button>
-            </div>
-          </form>
-
-          {/* Sort By Deadline */}
-          <div className='w-full md:w-auto'>
-            <select
-              name='sort'
-              id='sort'
-              className='w-full border-gray-200 focus:ring-blue-500 focus:border-blue-500 p-3.5 rounded-xl bg-white shadow-sm transition-all outline-none text-gray-600'
-            >
-              <option value=''>Sort By Deadline</option>
-              <option value='dsc'>Newest First</option>
-              <option value='asc'>Oldest First</option>
-            </select>
+            ))}
           </div>
-
-          {/* Reset Button */}
-          <button className='w-full md:w-auto px-8 py-3.5 font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-red-500 transition-all active:scale-95 shadow-sm'>
-            Reset Filters
-          </button>
         </div>
-
-        {/* Jobs Grid */}
-        <div className='grid grid-cols-1 gap-6 mt-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {jobs?.map((job) => (
-            <div
-              key={job._id}
-              className='hover:translate-y-[-5px] transition-transform duration-300'
-            >
-              <JobCard job={job} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div className='flex justify-center mt-12'>
-        {/* You can add a pagination component here later */}
-      </div>
+      )}
     </div>
   );
 };

@@ -45,6 +45,7 @@ export const getJobs = async (req, res) => {
   }
 };
 
+
 // get jobs by id
 export const getJobsById = async (req, res) => {
   try {
