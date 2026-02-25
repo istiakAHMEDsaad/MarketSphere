@@ -16,7 +16,7 @@ const SignUpAuth = () => {
     try {
       await signInWithGoogle();
 
-      toast.success('Signin Successful 🎉');
+      toast.success('Login Successful 🎉');
       navigate('/');
     } catch (error) {
       toast.error(error.message);

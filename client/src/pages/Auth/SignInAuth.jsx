@@ -17,7 +17,7 @@ const SignInAuth = () => {
     try {
       await signInWithGoogle();
 
-      toast.success('Signin Successful 🎉');
+      toast.success('Login Successful 🎉');
       navigate(currentLocation, { replace: true });
     } catch (error) {
       toast.error(error.message);
@@ -33,7 +33,7 @@ const SignInAuth = () => {
 
     try {
       await signIn(email, password);
-      toast.success('Signin Successful 🎉');
+      toast.success('Login Successful 🎉');
       navigate(currentLocation, { replace: true });
     } catch (error) {
       let message = '';

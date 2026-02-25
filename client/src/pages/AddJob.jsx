@@ -41,8 +41,8 @@ const AddJob = () => {
 
     onSuccess: () => {
       toast.success('Job added successfully');
-      queryClient.invalidateQueries({ queryKey: ['myJobs', user?.email] });
-      queryClient.invalidateQueries({ queryKey: ['allJobs'] });
+      queryClient.invalidateQueries(['myJobs', user?.email]);
+      queryClient.invalidateQueries(['allJobs']);
       reset();
       navigate('/my-posted-jobs');
     },

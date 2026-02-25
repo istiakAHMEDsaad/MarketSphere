@@ -29,9 +29,10 @@ const JobCardDetails = () => {
     onSuccess: () => {
       toast.success('Bid Successful!');
 
-      // invalidate related queries
-      queryClient.invalidateQueries(['myJobs', user?.email]);
+      queryClient.invalidateQueries(['myBids', user?.email]);
+      queryClient.invalidateQueries(['bidRequest', user?.email]);
       queryClient.invalidateQueries(['allJobs']);
+      queryClient.invalidateQueries(['jobDetails', id]);
 
       navigate('/my-bids');
     },

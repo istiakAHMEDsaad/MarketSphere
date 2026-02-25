@@ -1,11 +1,71 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/LoadingSpinner';
+import useAuth from '../hooks/useAuth';
+import axiosInstance from '../utils/axiosInstance';
+
 const BidRequests = () => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const {
+    data: bids = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['bidRequest', user?.email],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get(
+        `/bids/${user?.email}?buyer=true`,
+      );
+      return data.bids;
+    },
+    enabled: !!user?.email,
+  });
+
+  console.log(bids);
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }) => {
+      const { data } = await axiosInstance.patch(`/bids/${id}`, { status });
+      return data;
+    },
+
+    onSuccess: (_, variables) => {
+      toast.success(`Status Changed to ${variables.status}`);
+
+      queryClient.invalidateQueries(['bidRequest', user?.email]);
+      queryClient.invalidateQueries(['myBids', user?.email]);
+      queryClient.invalidateQueries(['jobDetails']);
+    },
+
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
+
+  const handleStatusChange = (id, prevStatus, newStatus) => {
+    if (prevStatus === newStatus || prevStatus === 'Completed') {
+      return toast.error('Not Allowed');
+    }
+
+    updateStatusMutation.mutate({ id, status: newStatus });
+  };
+
+  if (isLoading) return <LoadingSpinner />;
+
+  if (isError) {
+    toast.error('Failed to fetch the data!');
+  }
+
   return (
     <section className='container px-4 mx-auto my-12'>
       <div className='flex items-center gap-x-3'>
         <h2 className='text-lg font-medium text-base '>Bid Requests</h2>
 
         <span className='px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full '>
-          4 Requests
+          {bids?.length === 0 ? '0' : bids?.length} Requests
         </span>
       </div>
 
@@ -14,6 +74,7 @@ const BidRequests = () => {
           <div className='inline-block min-w-full py-2 align-middle md:px-6 lg:px-8'>
             <div className='overflow-hidden border border-gray-200  md:rounded-lg'>
               <table className='min-w-full divide-y divide-gray-200'>
+                {/* table head */}
                 <thead className='bg-gray-50'>
                   <tr>
                     <th
@@ -68,73 +129,112 @@ const BidRequests = () => {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className='bg-white divide-y divide-gray-200 '>
-                  <tr>
-                    <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      E-commerce Website Development
-                    </td>
-                    <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      instructors@programming-hero.com
-                    </td>
+                  {bids?.map((item) => (
+                    <tr key={item._id}>
+                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
+                        {item.title}
+                      </td>
+                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
+                        {item.email}
+                      </td>
 
-                    <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      28/05/2024
-                    </td>
+                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
+                        {item.deadline && format(new Date(item.deadline), 'P')}
+                      </td>
 
-                    <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      $500
-                    </td>
-                    <td className='px-4 py-4 text-sm whitespace-nowrap'>
-                      <div className='flex items-center gap-x-2'>
-                        <p className='px-3 py-1 rounded-full text-blue-500 bg-blue-100/60 text-xs'>
-                          Web Development
-                        </p>
-                      </div>
-                    </td>
-                    <td className='px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap'>
-                      <div className='inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/60 text-yellow-500'>
-                        <span className='h-1.5 w-1.5 rounded-full bg-green-500'></span>
-                        <h2 className='text-sm font-normal '>Complete</h2>
-                      </div>
-                    </td>
-                    <td className='px-4 py-4 text-sm whitespace-nowrap'>
-                      <div className='flex items-center gap-x-6'>
-                        <button className='disabled:cursor-not-allowed text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            className='w-5 h-5'
+                      <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
+                        ${item.price}
+                      </td>
+                      <td className='px-4 py-4 text-sm whitespace-nowrap'>
+                        <div className='flex items-center gap-x-2'>
+                          <p
+                            className={`px-3 py-1  ${item.category === 'Web Development' ? 'text-blue-500 bg-blue-100/60' : item.category === 'Graphics Design' ? 'text-green-500 bg-green-100/60' : 'text-rose-500 bg-rose-100/60'} text-xs  rounded-full`}
                           >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='m4.5 12.75 6 6 9-13.5'
-                            />
-                          </svg>
-                        </button>
-
-                        <button className='disabled:cursor-not-allowed text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            className='w-5 h-5'
+                            {item.category}
+                          </p>
+                        </div>
+                      </td>
+                      <td className='px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap'>
+                        <div
+                          className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${item.status === 'Pending' || item.status === 'Rejected' ? 'bg-red-100/60 text-red-500' : item.status === 'In Progress' ? 'bg-yellow-100/60 text-yellow-500' : 'bg-green-100/60 text-green-500'}`}
+                        >
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${item.status === 'Pending' || item.status === 'Rejected' ? 'bg-red-500' : item.status === 'In Progress' ? 'bg-yellow-500' : 'bg-green-500'}`}
+                          ></span>
+                          <h2 className='text-sm font-normal '>
+                            {item.status}
+                          </h2>
+                        </div>
+                      </td>
+                      <td className='px-4 py-4 text-sm whitespace-nowrap'>
+                        <div className='flex items-center gap-x-6'>
+                          {/* accept */}
+                          <button
+                            disabled={
+                              item.status === 'In Progress' ||
+                              item.status === 'Completed'
+                            }
+                            onClick={() =>
+                              handleStatusChange(
+                                item._id,
+                                item.status,
+                                'In Progress',
+                              )
+                            }
+                            className='disabled:cursor-not-allowed text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'
                           >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636'
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='1.5'
+                              stroke='currentColor'
+                              className='w-5 h-5'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='m4.5 12.75 6 6 9-13.5'
+                              />
+                            </svg>
+                          </button>
+
+                          {/* reject */}
+                          <button
+                            onClick={() =>
+                              handleStatusChange(
+                                item._id,
+                                item.status,
+                                'Rejected',
+                              )
+                            }
+                            disabled={
+                              item.status === 'Rejected' ||
+                              item.status === 'Completed'
+                            }
+                            className='disabled:cursor-not-allowed text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='1.5'
+                              stroke='currentColor'
+                              className='w-5 h-5'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636'
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -142,7 +242,7 @@ const BidRequests = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default BidRequests
+export default BidRequests;
